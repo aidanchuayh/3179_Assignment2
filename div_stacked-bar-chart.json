@@ -1,0 +1,56 @@
+{
+    "data": {
+      "url": "https://raw.githubusercontent.com/aidanchuayh/3179_Asgn2/main/australia-airports-coor-cleaned.csv",
+      "format": {"type": "csv"}
+    },
+    "title": "Diverging Stacked Bar Chart: Monthly International and Domestic Passengers",
+    "transform": [
+      {"filter": "datum.Year == 2023"},
+      {"filter": "datum.AIRPORT == 'MELBOURNE'"},
+      {"fold": ["Dom_Pax_Total", "Int_Pax_Total"], "as": ["Passenger_Type", "Passengers"]},
+      {
+        "calculate": "datum.Passenger_Type == 'Int_Pax_Total' ? 'Total International Passengers' : 'Total Domestic Passengers'",
+        "as": "Passenger_Type"
+      },
+      {
+        "calculate": "datum.Passenger_Type == 'Total International Passengers' ? datum.Passengers : -datum.Passengers",
+        "as": "Passengers"
+      },
+      {
+        "calculate": "abs(datum.Passengers)",
+        "as": "Passengers_Positive"
+      }
+    ],
+    "width": 800,
+    "height": 400,
+    "mark": "bar",
+    "encoding": {
+      "x": {
+        "field": "Passengers",
+        "type": "quantitative",
+        "title": "Number of Passengers",
+        "axis": {"grid": false}
+      },
+      "y": {
+        "field": "Month",
+        "type": "ordinal",
+        "title": "Month",
+        "sort": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+      },
+      "color": {
+        "field": "Passenger_Type",
+        "type": "nominal",
+        "scale": {
+          "domain": ["Total International Passengers", "Total Domestic Passengers"],
+          "range": ["#8c510a", "#d8b365"]
+        },
+        "title": "Passenger Type"
+      },
+      "tooltip": [
+        {"field": "Month", "type": "ordinal", "title": "Month"},
+        {"field": "Passenger_Type", "type": "nominal", "title": "Type"},
+        {"field": "Passengers_Positive", "type": "quantitative", "title": "Passengers"}
+      ]
+    }
+  }
+  
